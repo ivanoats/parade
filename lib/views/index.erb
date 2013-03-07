@@ -33,6 +33,13 @@
 <div id="pauseScreen">
   <%= pause_message %>
 </div>
-
+<script>
+  $(function()){
+    $('#preso')
+      .swipeEVents()
+      .bind("swipeLeft",  function(){ $('.buttonNav.next').submit(); })
+      .bind("swipeRight", function(){ $('.buttonNav.prev').submit(); });
+  });
+</script>
 </body>
 </html>
