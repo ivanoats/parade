@@ -91,18 +91,28 @@ module Parade
 
     helpers do
 
+      def presentation_path_prefix
+        env['SCRIPT_NAME'].to_s
+      end
+
       #
       # A shortcut to define a CSS resource file within a view template
       #
-      def css(filepath)
-        %{<link rel="stylesheet" href="#{File.join "css", filepath}" type="text/css"/>}
+      def css(*filepaths)
+        filepaths.map do |filepath|
+          css_path = File.join(presentation_path_prefix,"css",filepath)
+          %{<link rel="stylesheet" href="#{css_path}" type="text/css"/>}
+        end.join("\n")
       end
 
       #
       # A shortcut to define a Javascript resource file within a view template
       #
-      def js(filepath)
-        %{<script type="text/javascript" src="#{File.join "js", filepath}"></script>}
+      def js(*filepaths)
+        filepaths.map do |filepath|
+          js_path = File.join(presentation_path_prefix,"js",filepath)
+          %{<script type="text/javascript" src="#{js_path}"></script>}
+        end.join("\n")
       end
 
       def custom_resource(resource_extension)
@@ -168,8 +178,13 @@ module Parade
         presentation.title
       end
 
-      def slides
-        presentation.to_html
+      def slides(options = {})
+        options = { presentation_path_prefix: presentation_path_prefix }
+        presentation.to_html(options)
+      end
+
+      def footer
+        presentation.footer
       end
 
       def pause_message
@@ -190,16 +205,19 @@ module Parade
     # The request for slides is used by the client-side javascript presentation
     # and returns all the slides HTML.
     #
+    # A hash of params may contain:
+    #   * height - the current height of the window
+    #   * width - the current width of the window
     get "/slides" do
-      slides
+      slides(params)
     end
 
     get "/" do
       erb :index
     end
 
-    get "/onepage" do
-      erb :onepage
+    get "/print" do
+      erb :print
     end
 
   end

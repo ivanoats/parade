@@ -9,37 +9,51 @@
 
 <body>
 
-<a tabindex="0" href="#search-engines" class="fg-button fg-button-icon-right ui-widget ui-state-default ui-corner-all" id="navmenu"><span class="ui-icon ui-icon-triangle-1-s"></span>slides</a>
-<div id="navigation" class="hidden"></div>
+<%= erb :navigation %>
 
 <%= erb :help %>
-
-<div class="buttonNav">
-  <input class="prev" type="submit" value="prev"/>
-  <input class="next" type="submit" value="next"/>
-</div>
 
 <div id="tilda"></div>
 <div id="codeResults" class='results' style='display: none;'></div>
 
 <div id="preso">loading presentation...</div>
 
-<%= erb :footer %>
+<div id="slides" class="offscreen"></div>
 
-<div id="slides" class="offscreen" <%= 'style="display:none;"' if slides %>>
-<%= slides %>
-</div>
+<%= footer %>
 
 <div id="pauseScreen">
   <%= pause_message %>
 </div>
-<script>
-  $(function()){
-    $('#preso')
-      .swipeEvents()
-      .bind("swipeLeft",  function(){ $('.buttonNav.next').submit(); })
-      .bind("swipeRight", function(){ $('.buttonNav.prev').submit(); });
+
+<script type="text/javascript">
+
+  $(document).ready(function() {
+    presentation = new Presentation('<%= presentation_path_prefix %>');
+
+    var locationWatcher = new LocationWatcher();
+    locationWatcher.start();
+
+    /* Add Support for Touch Devices */
+
+    var presoElement = document.getElementById('preso');
+
+    Hammer(presoElement).on("swipeleft", function() {
+      $.publish("presentation:slide:next");
+    });
+
+    Hammer(presoElement).on("swiperight", function() {
+      $.publish("presentation:slide:previous");
+    });
+
+    // bind event handlers
+    /* window.onresize  = resized; */
+    /* window.onscroll = scrolled; */
+    /* window.onunload = unloaded; */
+
   });
+
 </script>
+
 </body>
 </html>
