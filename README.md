@@ -547,6 +547,10 @@ This command helps start a new parade presentation by setting up the proper dire
 >
 > description:"Presentation Description" - a description of the presentation
 
+Example:
+```parade gen presentation dir:name_of_directory title:"A title" description:"a
+description"```
+
 ## parade generate outline
 
 Create new parade outline file
